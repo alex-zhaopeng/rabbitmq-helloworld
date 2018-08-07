@@ -11,10 +11,12 @@ import java.util.Iterator;
 public class AnotherNioClient {
 
     public static void main(String[] args) {
+        Selector selector = null;
+        SocketChannel sc = null;
         try {
-            SocketChannel sc = SocketChannel.open();
+            sc = SocketChannel.open();
             sc.configureBlocking(false);
-            Selector selector = Selector.open();
+            selector = Selector.open();
             sc.connect(new InetSocketAddress("localhost", 8080));
             sc.register(selector, SelectionKey.OP_CONNECT);
 
@@ -39,6 +41,17 @@ public class AnotherNioClient {
 
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (selector != null) {
+                    selector.close();
+                }
+                if (sc != null) {
+                    sc.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -47,7 +60,7 @@ public class AnotherNioClient {
         SocketChannel out = (SocketChannel) key.channel();
         ByteBuffer outByteBuffer = ByteBuffer.allocate(1024);
         int readSize = out.read(outByteBuffer);
-        while (readSize > 0){
+        while (readSize > 0) {
             outByteBuffer.flip();
             byte[] b = new byte[readSize];
             outByteBuffer.get(b);
@@ -61,8 +74,8 @@ public class AnotherNioClient {
         SocketChannel in = (SocketChannel) key.channel();
         ByteBuffer inByteBuffer = ByteBuffer.allocate(1024);
         int i = 0;
-        while(true){
-            String info = "I'm "+ i++ +"-th information from client.";
+        while (true) {
+            String info = "I'm " + i++ + "-th information from client.";
             inByteBuffer.put(info.getBytes());
             //TODO 如何解决发送的问题
             inByteBuffer.flip();
