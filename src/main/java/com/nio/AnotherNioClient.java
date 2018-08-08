@@ -74,15 +74,15 @@ public class AnotherNioClient {
         SocketChannel in = (SocketChannel) key.channel();
         ByteBuffer inByteBuffer = ByteBuffer.allocate(1024);
         int i = 0;
-        while (true) {
-            String info = "I'm " + i++ + "-th information from client.";
-            inByteBuffer.put(info.getBytes());
-            //TODO 如何解决发送的问题
-            inByteBuffer.flip();
-            in.write(inByteBuffer);
-            inByteBuffer.clear();
-            in.register(key.selector(), SelectionKey.OP_READ);
-        }
+        //while (true) {
+        String info = "I'm " + i++ + "-th information from client.";
+        inByteBuffer.put(info.getBytes());
+        //TODO 如何解决发送的问题
+        inByteBuffer.flip();
+        in.write(inByteBuffer);
+        inByteBuffer.clear();
+        in.register(key.selector(), SelectionKey.OP_READ);
+        //}
 
     }
 
